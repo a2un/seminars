@@ -202,7 +202,7 @@ class WebTalk(object):
     def save_admin(self):
         # Like save, but doesn't change edited_at
         data = {col: getattr(self, col, None) for col in db.talks.search_cols}
-        assert data.get("shortname")
+        assert data.get("seminar_id") and data.get("seminar_ctr")
         data["edited_by"] = 0
         db.talks.insert_many([data])
 
