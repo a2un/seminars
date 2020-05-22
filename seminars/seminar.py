@@ -306,7 +306,7 @@ class WebSeminar(object):
         # Like save, but doesn't change edited_at
         data = {col: getattr(self, col, None) for col in db.seminars.search_cols}
         assert data.get("shortname")
-        data["edited_by"] = -2
+        data["edited_by"] = 0
         db.seminars.insert_many([data])
 
     def save_organizers(self):
