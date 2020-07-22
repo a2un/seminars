@@ -17,27 +17,33 @@ var beantheory = { db: {} };
 /** @return {!lf.schema.Builder} */
 beantheory.db.getSchemaBuilder = function() {
   var schemaBuilder = lf.schema.create('beantheory', 1);
-  //id: integer
-  //series_id: string
-  //series_ctr: string
-  //topics: string # concatenated with pipes at the end and beginning
-  //language: string
-  //title: string
-  //speaker: string
-  //start_time: datetime
-  //end_time: datetime
   schemaBuilder.createTable('talks').
       addColumn('uid', lf.Type.STRING). //  == series_id/series_ctr
       addColumn('series_id', lf.Type.STRING).
       addColumn('series_ctr', lf.Type.INTEGER).
-      addColumn('topics', lf.Type.STRING).
+      addColumn('topics', lf.Type.STRING). // concatenated with pipes at the end and beginning
       addColumn('language', lf.Type.STRING).
       addColumn('start_time', lf.Type.DATE_TIME).
       addColumn('end_time', lf.Type.DATE_TIME).
+      addColumn('past_oneline', lf.Type.string).
+      addColumn('future_oneline', lf.Type.string).
+      addColumn('saved', lf.Type.BOOLEAN). // null if not logged in
       addPrimaryKey(['uid']).
-      addIndex('idxStartTime', ['start_time'], false, lf.Order.ASC);
+      addNullable(['saved']).
+      addIndex('idxStartTime', ['start_time'], false, lf.Order.ASC).
+      addIndex('idxStartTimeDSC', ['start_time'], false, lf.Order.DESC);
   return schemaBuilder;
 }
+
+
+
+/**** User ****/
+var current_user = {
+  anonymous: true,
+  saved_talks: {},
+  saved_series: [],
+}
+
 
 
 // When the page loads.
@@ -51,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function(){
       db = database;
       return checkForExistingData();
     }).then(function(dataExist) {
-      return dataExist ? Promise.resolve() : loadAllTalks();
+      return dataExist ? Promise.resolve() : loadAllTalks({});
     });
   }
 });
@@ -84,6 +90,8 @@ var insertOrReplace_talks = function(data) {
             'language' : elt.language,
             'start_time' : new Date(elt.start_time),
             'end_time' : new Date(elt.end_time),
+            'past_oneline' : elt.past_oneline,
+            'future_oneline' : elt.future_oneline,
           })
         )
       })
@@ -113,11 +121,10 @@ var fetch_talks = function(query) {
       }
     }
     //FIXME
-    request.open("POST", "https://researchseminars.org/api/0/search/talks", true);
-    //xmlhttp.open("POST", "/api/0/search/talks", true);
+    request.open("POST", "https://test.researchseminars.org/api/browse/talks", true);
+    //xmlhttp.open("POST", "/api/browse/talks", true);
     request.setRequestHeader('Content-type', 'application/json');
-    projection =  ["seminar_id", "seminar_ctr", "topics", "language", "start_time", "end_time"]
-    request.send(JSON.stringify({'query': query, 'projection': projection}))
+    request.send(JSON.stringify({'query': query}))
   });
 }
 
@@ -125,6 +132,9 @@ var fetch_talks = function(query) {
 function loadAllTalks(query) {
   return fetch_talks(query).then(insertOrReplace_talks);
 }
+
+
+
 
 
 function countTopics() {
@@ -176,9 +186,75 @@ function countTopics() {
       });
 }
 
+function converTopics(topics_string) {
+  return new Set(topics_string.substing(1, talk.topics.length - 1).split('|'))
+}
+
+function hasCommonElement(a, b) {
+  for(const elt in a) {
+    if( b.has(elt) ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+
+function displayFutureTalks() {
+  //FIXME
+  filteredTopics = new Set();
+  filteredLanguages = new Set();
+  return db.select().
+    from(db.getSchema().table('talks')).
+    where(talks.end_time.gte(new Date())).
+    orderBy(talks.start_time, lf.Order.ASC).
+    exec().then(
+    function(results) {
+      let table = document.getElementById("browse-talks");
+      let index = 0;
+      results.forEach(function(talk) {
+        let newRow = document.createElement("tr");
+        newRow.classList.add("talk")
+        newRow.classList.add("lang-" + talk.language)
+        if( index % 2 == 0) {
+          newRow.classList.add("evenrow")
+        } else {
+          newRow.classList.add("oddrow")
+        }
+        index += 1;
+
+
+        newRow.innerText = talk.oneline;
+        let topics = converTopics(talk.topics);
+        topics.forEach(elt => newRow.classList.addClass("topic-" + elt))
+        if( talk.saved === false ) {
+          newRow.classList.addClass('calendar-filtered')
+        }
+        if( !hasCommonElement(topics, filteredTopics) ) {
+          newRow.classList.addClass('topic-filtered')
+        }
+        if( !hasCommonElement(topics, filteredLanguages) ) {
+          newRow.classList.addClass('language-filtered')
+        }
+
+        // TODO add topic-filtered and language-filtered
+
+        table.appendChild(newRow)
+      })
+    })
+}
 
     </script>
-<p id="demo"></p>
+
+
+    <table id="browse-talks" class="talk-table ntdata">
+      <thead>
+        <tr> <th colspan="3" class="yourtime">Your time</th><th class="seminar">Series</th><th class="speaker">Speaker</th><th class="title">Title</th><th class="saved">Saved</th> </tr>
+      </thead>
+    </table>
+
+
   </body>
 </html>
 
