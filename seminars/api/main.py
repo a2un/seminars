@@ -284,7 +284,12 @@ def browse_talk_data():
     raw_data = get_request_json()
     query = raw_data.pop("query", {})
     seminar_dict = all_seminars()
-    talks = talks_search(query, seminar_dict=seminar_dict, **raw_data)
+    try:
+        talks = talks_search(query, seminar_dict=seminar_dict, **raw_data)
+    except Exception as err:
+        raise APIError({"code": "search_error",
+                        "description": "error in executing search",
+                        "error": str(err)})
     now = datetime.now(tz=pytz.UTC)
     def make_dict(talk):
         D = {"seminar_id": talk.seminar_id,
@@ -305,8 +310,8 @@ def browse_talk_data():
         if now - talk.end_time > timedelta(days=-1):
             D["past_oneline"] = talk.oneline(include_content=True, include_subscribe=False)
         return D
-    data = [make_dict(talk) for talk in talks]
-    return str_jsonify(data, False)
+    ans = {"code": "success", "results": [make_dict(talk) for talk in talks]}
+    return str_jsonify(ans, False)
 
 def api_auth_required(fn):
     # Note that this wrapper will pass the user as a keyword argument to the wrapped function

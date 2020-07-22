@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function(){
       return checkForExistingData();
     }).then(function(dataExist) {
       return dataExist ? Promise.resolve() : loadAllTalks({});
-    });
+    }).then(displayFutureTalks);
   }
 });
 
@@ -77,6 +77,8 @@ function checkForExistingData() {
 
 
 var insertOrReplace_talks = function(data) {
+  console.log("insertOrReplace_talks")
+  console.log(data.code);
   if (data.code == "success") {
       talks = db.getSchema().table('talks');
       rows = [];
@@ -205,12 +207,14 @@ function displayFutureTalks() {
   //FIXME
   filteredTopics = new Set();
   filteredLanguages = new Set();
+  var talks = db.getSchema().table('talks');
   return db.select().
-    from(db.getSchema().table('talks')).
+    from(talks).
     where(talks.end_time.gte(new Date())).
     orderBy(talks.start_time, lf.Order.ASC).
     exec().then(
     function(results) {
+      console.log("foo");
       let table = document.getElementById("browse-talks");
       let index = 0;
       results.forEach(function(talk) {
