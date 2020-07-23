@@ -29,7 +29,7 @@ beantheory.db.getSchemaBuilder = function() {
       addColumn('future_oneline', lf.Type.string).
       addColumn('saved', lf.Type.BOOLEAN). // null if not logged in
       addPrimaryKey(['uid']).
-      addNullable(['saved']).
+      addNullable(['future_oneline', 'past_oneline', 'saved']).
       addIndex('idxStartTime', ['start_time'], false, lf.Order.ASC).
       addIndex('idxStartTimeDSC', ['start_time'], false, lf.Order.DESC);
   return schemaBuilder;
@@ -188,8 +188,8 @@ function countTopics() {
       });
 }
 
-function converTopics(topics_string) {
-  return new Set(topics_string.substing(1, talk.topics.length - 1).split('|'))
+function convertTopics(topics_string) {
+  return new Set(topics_string.substring(1, topics_string.length - 1).split('|'))
 }
 
 function hasCommonElement(a, b) {
@@ -229,17 +229,17 @@ function displayFutureTalks() {
         index += 1;
 
 
-        newRow.innerText = talk.oneline;
-        let topics = converTopics(talk.topics);
-        topics.forEach(elt => newRow.classList.addClass("topic-" + elt))
+        newRow.innerHTML = talk.future_oneline;
+        let topics = convertTopics(talk.topics);
+        topics.forEach(elt => newRow.classList.add("topic-" + elt))
         if( talk.saved === false ) {
-          newRow.classList.addClass('calendar-filtered')
+          newRow.classList.add('calendar-filtered')
         }
         if( !hasCommonElement(topics, filteredTopics) ) {
-          newRow.classList.addClass('topic-filtered')
+          newRow.classList.add('topic-filtered')
         }
         if( !hasCommonElement(topics, filteredLanguages) ) {
-          newRow.classList.addClass('language-filtered')
+          newRow.classList.add('language-filtered')
         }
 
         // TODO add topic-filtered and language-filtered
