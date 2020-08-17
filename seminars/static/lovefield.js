@@ -189,24 +189,23 @@ function displayTalks() {
 
 
 function lovefield_main() {
-  // figure out if we can use indexed_db
-  var storageType =  lf.schema.DataStoreType.MEMORY;
+  function connect(storageType) {
+    return beantheory.db.getSchemaBuilder().connect({
+      storeType: storageType
+    }).then(function(database) {
+      db = database;
+      return checkForExistingData();
+    }).then(function(dataExist) {
+      return dataExist ? Promise.resolve() : loadAllTalks({});
+    }).then(displayTalks);
+  }
   try {
-    var idb = indexedDB.open("indexedDBQ");
-    idb.onerror = function() {};
-    idb.onsuccess = function() { storageType = lf.schema.DataStoreType.INDEXED_DB;};
+    connect(lf.schema.DataStoreType.INDEXED_DB);
   }
   catch(err) {
+    //fallback to memory
+    connect(lf.schema.DataStoreType.MEMORY);
   }
-  console.log(storageType);
-  return beantheory.db.getSchemaBuilder().connect({
-    storeType: storageType
-  }).then(function(database) {
-    db = database;
-    return checkForExistingData();
-  }).then(function(dataExist) {
-    return dataExist ? Promise.resolve() : loadAllTalks({});
-  }).then(displayTalks);
 }
 
 
