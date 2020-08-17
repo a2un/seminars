@@ -38,6 +38,9 @@ var current_user = {
 
 
 
+
+
+
 function checkForExistingData() {
   var talks = db.getSchema().table('talks');
   var column = lf.fn.count(talks.uid);
@@ -178,7 +181,8 @@ function hasCommonElement(a, b) {
 
 
 
-function displayTalks(past=false) {
+function displayTalks() {
+  past = document.body.querySelector('input[name="past"]').value == "True";
   //FIXME
   filteredTopics = new Set();
   filteredLanguages = new Set();
@@ -190,7 +194,7 @@ function displayTalks(past=false) {
     exec().then(
     function(results) {
       console.log("foo");
-      let table = document.getElementById("browse-talks");
+      let tbody = document.querySelector("table#browse-talks > tbody");
       //FIXME add tbody
       let index = 0;
       results.forEach(function(talk) {
@@ -218,7 +222,25 @@ function displayTalks(past=false) {
           newRow.classList.add('language-filtered')
         }
 
-        table.appendChild(newRow)
+        tbody.appendChild(newRow)
       })
     })
 }
+
+
+// When the page loads.
+document.addEventListener("DOMContentLoaded", function(){
+  main().then(function () { countTopics()});
+  function main() {
+    return beantheory.db.getSchemaBuilder().connect({
+      //FIXME?
+      storeType: lf.schema.DataStoreType.MEMORY
+    }).then(function(database) {
+      db = database;
+      console.log("foo");
+      return checkForExistingData();
+    }).then(function(dataExist) {
+      return dataExist ? Promise.resolve() : loadAllTalks({});
+    }).then(displayTalks);
+  }
+});
