@@ -4,6 +4,13 @@
     <meta charset="utf-8" />
     <title>Minimal example of using Lovefield</title>
     <script src="https://unpkg.com/lovefield@2.1.12/dist/lovefield.min.js"></script>
+<!-- jQuery -->
+    <script
+            type="text/javascript"
+            src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"
+            integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f"
+            crossorigin="anonymous"></script>
+    <script src="seminars.js"></script>
   </head>
   <body>
     <script>
@@ -241,8 +248,6 @@ function displayFutureTalks() {
         if( !hasCommonElement(topics, filteredLanguages) ) {
           newRow.classList.add('language-filtered')
         }
-
-        // TODO add topic-filtered and language-filtered
 
         table.appendChild(newRow)
       })

@@ -1,7 +1,10 @@
 {% extends 'browse.html' %}
 
 {% block browsing %}
+<script src="https://unpkg.com/lovefield@2.1.12/dist/lovefield.min.js"></script>
+<script src="/lovefield.js"></script>
 <input type="hidden" name="past" value="{{ past }}">
+
 
 <div id="timezone-table" style="padding: 10px 4px 0px 4px;">
   Times in {{ user.show_timezone("browse") }}
@@ -16,15 +19,7 @@
     {% endif %}
   </thead>
   <tbody>
-    {% for talk, row_attributes in talk_row_attributes %}
-    <tr {{ row_attributes | safe }} >
-      {% if past %}
-      {{ talk.oneline(include_content=True, include_subscribe=False) | safe }}
-      {% else %}
-      {{ talk.oneline() | safe }}
-      {% endif %}
-    </tr>
-    {% endfor %}
+
   </tbody>
 </table>
 
