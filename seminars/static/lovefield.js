@@ -203,7 +203,7 @@ function lovefield_main() {
     connect(lf.schema.DataStoreType.INDEXED_DB);
   }
   catch(err) {
-    //fallback to memory
+    console.log("fallback to memory");
     connect(lf.schema.DataStoreType.MEMORY);
   }
 }
