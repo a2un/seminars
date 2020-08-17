@@ -185,7 +185,7 @@ function displayTalks() {
 }
 
 
-function main() {
+function lovefield_main() {
   return beantheory.db.getSchemaBuilder().connect({
     //FIXME?
     storeType: lf.schema.DataStoreType.MEMORY
@@ -200,11 +200,11 @@ function main() {
 
 // When the page loads.
 if( document.readyState !== 'loading' ) {
-  main();
+  lovefield_main();
   knowl_register_onclick(document);
 } else {
   document.addEventListener("DOMContentLoaded", function(){
-    main();
+    lovefield_main();
     knowl_register_onclick(document);
   });
 }
