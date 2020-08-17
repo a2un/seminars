@@ -146,7 +146,6 @@ function displayTalks() {
     orderBy(talks.start_time, (past) ? lf.Order.DESC : lf.Order.ASC).
     exec().then(
     function(results) {
-      console.log("foo");
       let tbody = document.querySelector("table#browse-talks > tbody");
       //FIXME add tbody
       let index = 0;
@@ -183,7 +182,7 @@ function displayTalks() {
       })
     }).then(
       function () {
-        knowl_register_onclick(document.querySelector("table#browse-talks > tbody"));
+        return knowl_register_onclick(document.querySelector("table#browse-talks > tbody"));
       }
     );
 }
