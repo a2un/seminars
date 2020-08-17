@@ -198,6 +198,7 @@ function lovefield_main() {
   }
   catch(err) {
   }
+  console.log(storageType);
   return beantheory.db.getSchemaBuilder().connect({
     storeType: storageType
   }).then(function(database) {
