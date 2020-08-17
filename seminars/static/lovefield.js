@@ -191,7 +191,7 @@ function displayTalks() {
 function lovefield_main() {
   return beantheory.db.getSchemaBuilder().connect({
     //FIXME?
-    storeType: lf.schema.DataStoreType.MEMORY
+    //storeType: lf.schema.DataStoreType.MEMORY
   }).then(function(database) {
     db = database;
     return checkForExistingData();
