@@ -194,20 +194,11 @@ function lovefield_main() {
     return checkForExistingData();
   }).then(function(dataExist) {
     return dataExist ? Promise.resolve() : loadAllTalks({});
-  }).then(displayTalks);
+  }).then(displayTalks).then(knowl_register_onclick(document));
 }
 
 
-// When the page loads.
-if( document.readyState !== 'loading' ) {
-  lovefield_main();
-  knowl_register_onclick(document);
-} else {
-  document.addEventListener("DOMContentLoaded", function(){
-    lovefield_main();
-    knowl_register_onclick(document);
-  });
-}
+
 
 
 

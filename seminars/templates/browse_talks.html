@@ -4,16 +4,7 @@
 <script src="https://unpkg.com/lovefield@2.1.12/dist/lovefield.min.js"></script>
 <script src="/lovefield.js"></script>
 <script>
-  // When the page loads.
-  if( document.readyState !== 'loading' ) {
     lovefield_main();
-    knowl_register_onclick(document);
-  } else {
-    document.addEventListener("DOMContentLoaded", function(){
-      lovefield_main();
-      knowl_register_onclick(document);
-    });
-  }
 </script>
 <input type="hidden" name="past" value="{{ past }}">
 
