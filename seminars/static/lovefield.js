@@ -199,13 +199,7 @@ function lovefield_main() {
       return dataExist ? Promise.resolve() : loadAllTalks({});
     }).then(displayTalks);
   }
-  try {
-    connect(lf.schema.DataStoreType.INDEXED_DB);
-  }
-  catch(err) {
-    console.log("fallback to memory");
-    connect(lf.schema.DataStoreType.MEMORY);
-  }
+  return connect(lf.schema.DataStoreType.INDEXED_DB).catch(connect(lf.schema.DataStoreType.MEMORY))
 }
 
 
