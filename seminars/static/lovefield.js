@@ -117,54 +117,7 @@ function loadAllTalks(query) {
 
 
 
-function countTopics() {
-  var talks = db.getSchema().table('talks');
-  return db.select(talks.topics).from(talks).exec().then(
-    function(results) {
-      var counter = {};
-      results.forEach(
-        function(row) {
-          row.topics.split('|').forEach(
-            function(topic) {
-              if( topic ){
-                if( !(topic in counter) ) {
-                  counter[topic] = 0;
-                }
-                counter[topic] += 1;
-              }
-            })
-        }
-      );
-      var pairs = Object.keys(counter).map(function(key) {
-        return [key, counter[key]];
-      });
-      // Sort the array based on the second element
-      pairs.sort(function(first, second) {
-        return second[1] - first[1];
-      });
-      var table = document.createElement("table");
-      var newRow = document.createElement("tr");
-      var topic = document.createElement("th")
-      topic.innerText = "topic";
-      newRow.appendChild(topic);
-      var count = document.createElement("th");
-      count.innerText = "count";
-      newRow.appendChild(count);
-      table.appendChild(newRow);
-      for (const [key, value] of pairs) {
-        var newRow = document.createElement("tr");
-        var topic = document.createElement("td")
-        topic.innerText = key;
-        newRow.appendChild(topic);
-        var count = document.createElement("td");
-        count.innerText = value;
-        newRow.appendChild(count);
-        table.appendChild(newRow);
 
-      }
-      document.body.appendChild(table);
-      });
-}
 
 function convertTopics(topics_string) {
   return new Set(topics_string.substring(1, topics_string.length - 1).split('|'))
@@ -230,7 +183,7 @@ function displayTalks() {
 
 // When the page loads.
 document.addEventListener("DOMContentLoaded", function(){
-  main().then(function () { countTopics()});
+  main();
   function main() {
     return beantheory.db.getSchemaBuilder().connect({
       //FIXME?
@@ -244,3 +197,59 @@ document.addEventListener("DOMContentLoaded", function(){
     }).then(displayTalks);
   }
 });
+
+
+
+
+// NOT IN USE
+//
+//
+/*
+function countTopics() {
+  var talks = db.getSchema().table('talks');
+  return db.select(talks.topics).from(talks).exec().then(
+    function(results) {
+      var counter = {};
+      results.forEach(
+        function(row) {
+          row.topics.split('|').forEach(
+            function(topic) {
+              if( topic ){
+                if( !(topic in counter) ) {
+                  counter[topic] = 0;
+                }
+                counter[topic] += 1;
+              }
+            })
+        }
+      );
+      var pairs = Object.keys(counter).map(function(key) {
+        return [key, counter[key]];
+      });
+      // Sort the array based on the second element
+      pairs.sort(function(first, second) {
+        return second[1] - first[1];
+      });
+      var table = document.createElement("table");
+      var newRow = document.createElement("tr");
+      var topic = document.createElement("th")
+      topic.innerText = "topic";
+      newRow.appendChild(topic);
+      var count = document.createElement("th");
+      count.innerText = "count";
+      newRow.appendChild(count);
+      table.appendChild(newRow);
+      for (const [key, value] of pairs) {
+        var newRow = document.createElement("tr");
+        var topic = document.createElement("td")
+        topic.innerText = key;
+        newRow.appendChild(topic);
+        var count = document.createElement("td");
+        count.innerText = value;
+        newRow.appendChild(count);
+        table.appendChild(newRow);
+
+      }
+      document.body.appendChild(table);
+      });
+}*/
