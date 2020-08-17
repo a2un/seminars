@@ -182,7 +182,6 @@ function displayTalks() {
       })
     }).then(
       function () {
-        console.log("bar");
         return knowl_register_onclick(document.querySelector("table#browse-talks > tbody"));
       }
     );
