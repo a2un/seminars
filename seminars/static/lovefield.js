@@ -161,8 +161,12 @@ function displayTalks() {
         }
         index += 1;
 
+        if(past) {
+          newRow.innerHTML = talk.past_oneline;
+        } else {
+          newRow.innerHTML = talk.future_oneline;
+        }
 
-        newRow.innerHTML = talk.future_oneline;
         let topics = convertTopics(talk.topics);
         topics.forEach(elt => newRow.classList.add("topic-" + elt))
         if( talk.saved === false ) {
