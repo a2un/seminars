@@ -181,7 +181,11 @@ function displayTalks() {
 
         tbody.appendChild(newRow)
       })
-    })
+    }).then(
+      function () {
+        knowl_register_onclick(document.querySelector("table#browse-talks > tbody"));
+      }
+    );
 }
 
 
@@ -194,7 +198,7 @@ function lovefield_main() {
     return checkForExistingData();
   }).then(function(dataExist) {
     return dataExist ? Promise.resolve() : loadAllTalks({});
-  }).then(displayTalks).then(knowl_register_onclick(document));
+  }).then(displayTalks);
 }
 
 
