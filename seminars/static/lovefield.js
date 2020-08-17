@@ -189,9 +189,17 @@ function displayTalks() {
 
 
 function lovefield_main() {
+  // figure out if we can use indexed_db
+  var storageType =  lf.schema.DataStoreType.MEMORY;
+  try {
+    var idb = indexedDB.open("indexedDBQ");
+    idb.onerror = function() {};
+    idb.onsuccess = function() { storageType = lf.schema.DataStoreType.INDEXED_DB;};
+  }
+  catch(err) {
+  }
   return beantheory.db.getSchemaBuilder().connect({
-    //FIXME?
-    //storeType: lf.schema.DataStoreType.MEMORY
+    storeType: storageType
   }).then(function(database) {
     db = database;
     return checkForExistingData();
