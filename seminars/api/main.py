@@ -300,8 +300,8 @@ def browse_talk_data():
              "end_time": talk.end_time}
         if current_user.is_authenticated:
             D["saved"] = (
-                talk.seminar_id in current_user.seminar_subscriptions() or
-                talk.seminar_ctr in current_user.talk_subscriptions().get(
+                talk.seminar_id in current_user.seminar_subscriptions or
+                talk.seminar_ctr in current_user.talk_subscriptions.get(
                     talk.seminar_id, []
                 )
             )
