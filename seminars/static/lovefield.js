@@ -185,21 +185,29 @@ function displayTalks() {
 }
 
 
+function main() {
+  return beantheory.db.getSchemaBuilder().connect({
+    //FIXME?
+    storeType: lf.schema.DataStoreType.MEMORY
+  }).then(function(database) {
+    db = database;
+    return checkForExistingData();
+  }).then(function(dataExist) {
+    return dataExist ? Promise.resolve() : loadAllTalks({});
+  }).then(displayTalks);
+}
+
+
 // When the page loads.
-//document.addEventListener("DOMContentLoaded", function(){
-  function main() {
-    return beantheory.db.getSchemaBuilder().connect({
-      //FIXME?
-      storeType: lf.schema.DataStoreType.MEMORY
-    }).then(function(database) {
-      db = database;
-      return checkForExistingData();
-    }).then(function(dataExist) {
-      return dataExist ? Promise.resolve() : loadAllTalks({});
-    }).then(displayTalks);
-  }
+if( document.readyState !== 'loading' ) {
   main();
-//});
+  knowl_register_onclick(document);
+} else {
+  document.addEventListener("DOMContentLoaded", function(){
+    main();
+    knowl_register_onclick(document);
+  });
+}
 
 
 
