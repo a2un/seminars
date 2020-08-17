@@ -101,8 +101,8 @@ var fetch_talks = function(query) {
       }
     }
     //FIXME
-    request.open("POST", "https://test.researchseminars.org/api/browse/talks", true);
-    //xmlhttp.open("POST", "/api/browse/talks", true);
+    //request.open("POST", "https://test.researchseminars.org/api/browse/talks", true);
+    request.open("POST", "/api/browse/talks", true);
     request.setRequestHeader('Content-type', 'application/json');
     request.send(JSON.stringify({'query': query}))
   });
